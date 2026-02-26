@@ -1,0 +1,534 @@
+/* ============================================
+   PHARMACY MAP + TICKER MODE STYLES
+   ============================================ */
+
+#pharmacy-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ---------- Map Area ---------- */
+.pharmacy-map {
+    flex: 1;
+    min-height: 0;
+    z-index: 1;
+}
+
+/* Leaflet theme */
+.leaflet-container {
+    background: #f2f2f2 !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.leaflet-control-zoom a {
+    background: rgba(20, 27, 45, 0.9) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    width: 36px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    font-size: 18px !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: rgba(30, 40, 65, 0.95) !important;
+}
+
+.leaflet-control-attribution {
+    display: none !important;
+}
+
+/* ---------- Location Badge on Map ---------- */
+.map-location-badge {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(10, 14, 23, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    animation: fadeInDown 0.5s ease;
+}
+
+.map-location-badge .badge-icon {
+    width: 18px;
+    height: 18px;
+    color: #3b82f6;
+}
+
+.map-location-badge #location-info {
+    font-size: 13px;
+    font-weight: 500;
+    color: #e2e8f0;
+    white-space: nowrap;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ---------- Marker Styles ---------- */
+.pharmacy-marker-wrapper {
+    background: transparent !important;
+    border: none !important;
+}
+
+.pharmacy-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #00c853;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 3px solid #fff;
+    box-shadow: 0 3px 14px rgba(0, 200, 83, 0.6), 0 0 30px rgba(0, 200, 83, 0.3);
+    animation: markerDrop 0.4s ease-out;
+}
+
+.pharmacy-marker-inner {
+    transform: rotate(45deg);
+    font-size: 16px;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes markerDrop {
+    from {
+        transform: rotate(-45deg) translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotate(-45deg) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* User location dot */
+.user-marker-wrapper {
+    background: transparent !important;
+    border: none !important;
+}
+
+.user-marker {
+    width: 18px;
+    height: 18px;
+    background: #3b82f6;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.2);
+    animation: pulse-blue 2s infinite;
+}
+
+@keyframes pulse-blue {
+
+    0%,
+    100% {
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.9), 0 0 50px rgba(59, 130, 246, 0.4);
+    }
+}
+
+/* ---------- Marker Popup ---------- */
+.leaflet-popup-content-wrapper {
+    background: rgba(15, 20, 35, 0.95) !important;
+    color: #e2e8f0 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 200, 83, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 200, 83, 0.15) !important;
+    padding: 0 !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    min-width: 220px;
+}
+
+.leaflet-popup-tip {
+    background: rgba(15, 20, 35, 0.95) !important;
+    border: 1px solid rgba(0, 200, 83, 0.3) !important;
+    box-shadow: none !important;
+}
+
+.leaflet-popup-close-button {
+    color: #94a3b8 !important;
+    font-size: 20px !important;
+    top: 6px !important;
+    right: 8px !important;
+}
+
+.leaflet-popup-close-button:hover {
+    color: #fff !important;
+}
+
+.pharmacy-popup {
+    padding: 14px;
+}
+
+.pharmacy-popup .popup-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4ade80;
+    margin-bottom: 8px;
+    padding-right: 20px;
+}
+
+.pharmacy-popup .popup-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.pharmacy-popup .popup-detail svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #64748b;
+}
+
+.pharmacy-popup .popup-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pharmacy-popup .popup-dist {
+    padding: 2px 10px;
+    background: rgba(0, 200, 83, 0.1);
+    border: 1px solid rgba(0, 200, 83, 0.2);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4ade80;
+}
+
+.pharmacy-popup .popup-district-name {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* ---------- Bottom Ticker Bar ---------- */
+.pharmacy-ticker {
+    height: 80px;
+    background: linear-gradient(180deg, rgba(10, 14, 23, 0.95) 0%, rgba(15, 20, 35, 1) 100%);
+    border-top: 1px solid rgba(0, 200, 83, 0.15);
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.ticker-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 80px;
+    height: 100%;
+    padding: 0 12px;
+    background: linear-gradient(135deg, #00c853 0%, #009624 100%);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ticker-label-icon {
+    font-size: 22px;
+}
+
+.ticker-track-wrapper {
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+}
+
+.ticker-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 0;
+    animation: ticker-scroll 20s linear infinite;
+    width: max-content;
+}
+
+@keyframes ticker-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Individual pharmacy ticker item */
+.ticker-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 30px;
+    height: 100%;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ticker-item .ticker-cross {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 200, 83, 0.1);
+    border: 2px solid rgba(0, 200, 83, 0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4ade80;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.ticker-item .ticker-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ticker-item .ticker-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.ticker-item .ticker-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ticker-item .ticker-distance {
+    color: #4ade80;
+    font-weight: 600;
+}
+
+.ticker-item .ticker-phone {
+    color: #94a3b8;
+}
+
+/* ---------- Loading / Error ---------- */
+.pharmacy-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(10, 14, 23, 0.98);
+    color: #94a3b8;
+    font-size: 15px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #00c853;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.pharmacy-error {
+    position: absolute;
+    inset: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(10, 14, 23, 0.95);
+    text-align: center;
+    color: #94a3b8;
+}
+
+.error-icon {
+    width: 48px;
+    height: 48px;
+    color: #ef4444;
+}
+
+.retry-btn {
+    margin-top: 8px;
+    padding: 8px 24px;
+    background: #00c853;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.retry-btn:hover {
+    background: #00e676;
+}
+
+/* ============================================
+   ADAPTIVE BREAKPOINTS
+   ============================================ */
+
+@media (max-width: 767px) {
+    .pharmacy-ticker {
+        height: 60px;
+    }
+
+    .ticker-label {
+        min-width: 60px;
+        font-size: 10px;
+    }
+
+    .ticker-label-icon {
+        font-size: 18px;
+    }
+
+    .ticker-item {
+        padding: 0 16px;
+        gap: 10px;
+    }
+
+    .ticker-item .ticker-name {
+        font-size: 13px;
+    }
+
+    .ticker-item .ticker-cross {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+    }
+
+    .map-location-badge {
+        padding: 6px 14px;
+    }
+
+    .map-location-badge #location-info {
+        font-size: 11px;
+    }
+
+    .pharmacy-marker {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (min-width: 1921px) {
+    .pharmacy-ticker {
+        height: 100px;
+    }
+
+    .ticker-label {
+        min-width: 120px;
+        font-size: 16px;
+    }
+
+    .ticker-label-icon {
+        font-size: 30px;
+    }
+
+    .ticker-item {
+        padding: 0 40px;
+        gap: 18px;
+    }
+
+    .ticker-item .ticker-name {
+        font-size: 20px;
+    }
+
+    .ticker-item .ticker-meta {
+        font-size: 15px;
+    }
+
+    .ticker-item .ticker-cross {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
+        border-radius: 12px;
+    }
+
+    .map-location-badge {
+        padding: 12px 28px;
+    }
+
+    .map-location-badge #location-info {
+        font-size: 16px;
+    }
+
+    .pharmacy-marker {
+        width: 52px;
+        height: 52px;
+        border-width: 4px;
+    }
+
+    .pharmacy-marker-inner {
+        font-size: 22px;
+    }
+
+    .leaflet-control-zoom a {
+        width: 50px !important;
+        height: 50px !important;
+        line-height: 50px !important;
+        font-size: 22px !important;
+    }
+}

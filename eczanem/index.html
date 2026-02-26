@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Eczane Dijital Tabela - Nöbetçi Eczane ve Vitrin Gösterimi" />
+  <title>Eczanem - Dijital Tabela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <!-- Leaflet.js Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <link rel="stylesheet" href="/src/styles/slideshow.css" />
+  <link rel="stylesheet" href="/src/styles/pharmacy.css" />
+  <link rel="stylesheet" href="/src/styles/admin.css" />
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <header id="top-bar">
+    <div class="top-bar-left">
+      <div class="pharmacy-logo">
+        <svg viewBox="0 0 40 40" class="logo-icon">
+          <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2" />
+          <rect x="12" y="17" width="16" height="6" rx="1" fill="currentColor" />
+          <rect x="17" y="12" width="6" height="16" rx="1" fill="currentColor" />
+        </svg>
+      </div>
+      <h1 class="pharmacy-name">ECZANEM</h1>
+    </div>
+    <div class="top-bar-right">
+      <div id="mode-badge" class="mode-badge">
+        <span class="mode-icon"></span>
+        <span class="mode-text"></span>
+      </div>
+      <div id="clock" class="clock"></div>
+    </div>
+  </header>
+
+  <!-- Slideshow Mode (08:00 - 17:00) -->
+  <section id="slideshow-container" class="mode-container">
+    <div id="slideshow-track" class="slideshow-track"></div>
+    <div id="slideshow-progress" class="slideshow-progress"></div>
+    <button id="slide-prev" class="slide-nav slide-prev" aria-label="Önceki">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+    <button id="slide-next" class="slide-nav slide-next" aria-label="Sonraki">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
+  </section>
+
+  <!-- Pharmacy Mode (17:00 - 08:00) -->
+  <section id="pharmacy-container" class="mode-container">
+    <!-- Map area (top) -->
+    <div id="pharmacy-map" class="pharmacy-map"></div>
+
+    <!-- Location badge on map -->
+    <div id="map-location-badge" class="map-location-badge">
+      <svg viewBox="0 0 24 24" class="badge-icon" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+        <circle cx="12" cy="9" r="2.5" />
+      </svg>
+      <span id="location-info">Konum belirleniyor...</span>
+    </div>
+
+    <!-- Scrolling pharmacy ticker (bottom) -->
+    <div id="pharmacy-ticker" class="pharmacy-ticker">
+      <div class="ticker-label">
+        <span class="ticker-label-icon">🏥</span>
+        <span>Nöbetçi</span>
+      </div>
+      <div class="ticker-track-wrapper">
+        <div id="ticker-track" class="ticker-track">
+          <!-- Pharmacy items scroll here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="pharmacy-loading" class="pharmacy-loading">
+      <div class="loading-spinner"></div>
+      <p>Nöbetçi eczaneler yükleniyor...</p>
+    </div>
+
+    <!-- Error overlay -->
+    <div id="pharmacy-error" class="pharmacy-error" style="display:none">
+      <svg viewBox="0 0 24 24" class="error-icon" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <p id="error-message">Bir hata oluştu</p>
+      <button id="retry-btn" class="retry-btn">Tekrar Dene</button>
+    </div>
+  </section>
+
+  <!-- Transition overlay -->
+  <div id="transition-overlay" class="transition-overlay"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

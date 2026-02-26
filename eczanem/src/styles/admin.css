@@ -1,0 +1,242 @@
+/* ============================================
+   ADMIN PANEL STYLES
+   ============================================ */
+
+/* Floating settings button */
+#admin-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 500;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(15, 20, 35, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#admin-btn:hover {
+    background: rgba(20, 30, 50, 0.95);
+    color: #e2e8f0;
+    transform: rotate(90deg) scale(1.1);
+    border-color: rgba(0, 200, 83, 0.3);
+}
+
+/* Panel overlay */
+#admin-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#admin-panel.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dialog */
+.admin-dialog {
+    width: 90%;
+    max-width: 500px;
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+#admin-panel.open .admin-dialog {
+    transform: translateY(0) scale(1);
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-header h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.admin-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.admin-body {
+    padding: 24px;
+}
+
+.admin-desc {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* Upload area */
+.admin-upload-area {
+    position: relative;
+    padding: 32px 24px;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-upload-area:hover,
+.admin-upload-area.dragover {
+    border-color: rgba(0, 200, 83, 0.5);
+    background: rgba(0, 200, 83, 0.03);
+}
+
+.admin-upload-area svg {
+    width: 36px;
+    height: 36px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.admin-upload-area p {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.admin-upload-area .upload-hint {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+.admin-upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Status */
+.admin-status {
+    margin-top: 16px;
+    font-size: 13px;
+}
+
+.status-info {
+    color: #4ade80;
+    padding: 8px 12px;
+    background: rgba(0, 200, 83, 0.05);
+    border-radius: 8px;
+}
+
+.status-success {
+    color: #4ade80;
+    padding: 8px 12px;
+    background: rgba(0, 200, 83, 0.1);
+    border: 1px solid rgba(0, 200, 83, 0.2);
+    border-radius: 8px;
+}
+
+.status-saving {
+    color: #fbbf24;
+    padding: 8px 12px;
+    background: rgba(251, 191, 36, 0.05);
+    border-radius: 8px;
+}
+
+.status-error {
+    color: #ef4444;
+    padding: 8px 12px;
+    background: rgba(239, 68, 68, 0.05);
+    border-radius: 8px;
+}
+
+/* Actions */
+.admin-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-action-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+}
+
+.admin-action-btn.danger:hover {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    .admin-dialog {
+        width: 95%;
+    }
+
+    #admin-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        bottom: 12px;
+        right: 12px;
+    }
+}

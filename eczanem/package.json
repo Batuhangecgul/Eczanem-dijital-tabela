@@ -1,0 +1,18 @@
+{
+  "name": "eczanem",
+  "version": "1.0.0",
+  "description": "Eczane Dijital Tabela Uygulaması",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "node-fetch": "^2.7.0"
+  }
+}
