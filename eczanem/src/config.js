@@ -3,8 +3,8 @@
  */
 export const CONFIG = {
     // Mode schedule (24h format)
-    SLIDESHOW_START: 0,   // 08:00
-    SLIDESHOW_END: 0,    // 17:00
+    SLIDESHOW_START: 8,   // 08:00
+    SLIDESHOW_END: 17,    // 17:00
     PHARMACY_START: 0,    // TEST: devre dışı
     PHARMACY_END: 0,      // TEST: devre dışı
 
