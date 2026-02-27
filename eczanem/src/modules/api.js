@@ -4,6 +4,7 @@
  * Falls back to demo data if scraper fails
  */
 import { CONFIG } from '../config.js';
+import { getOfflinePharmacies, isOfflineMode } from './pharmacyStore.js';
 
 // Cache
 let cache = { date: null, data: null };
@@ -13,6 +14,13 @@ let cache = { date: null, data: null };
  */
 export async function fetchPharmacies(city, district) {
     const today = new Date().toISOString().split('T')[0];
+
+    // Check offline mode first
+    if (isOfflineMode()) {
+        const offlineData = getOfflinePharmacies();
+        console.log(`Using ${offlineData.length} offline pharmacies`);
+        return offlineData;
+    }
 
     if (cache.date === today && cache.data) {
         console.log('Using cached pharmacy data');

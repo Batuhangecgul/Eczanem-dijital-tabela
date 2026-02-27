@@ -68,7 +68,7 @@
   --transition-mode: 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   /* Top bar height */
-  --topbar-height: 64px;
+  --topbar-height: 88px;
 }
 
 /* ---------- Reset ---------- */
@@ -80,7 +80,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -115,16 +116,9 @@ html, body {
   gap: var(--space-md);
 }
 
-.pharmacy-logo .logo-icon {
-  width: 36px;
-  height: 36px;
-  color: var(--primary);
-  filter: drop-shadow(0 0 8px var(--primary-glow));
-}
-
 .pharmacy-name {
   font-family: 'Outfit', sans-serif;
-  font-size: var(--fs-xl);
+  font-size: var(--fs-2xl);
   font-weight: 700;
   letter-spacing: 2px;
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, var(--primary-dark) 100%);
@@ -143,11 +137,11 @@ html, body {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-full);
   background: rgba(0, 200, 83, 0.1);
   border: 1px solid var(--border-glow);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-base);
   font-weight: 500;
   color: var(--primary-light);
   transition: var(--transition-base);
@@ -160,8 +154,8 @@ html, body {
 }
 
 .mode-icon {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--primary);
   animation: pulse-dot 2s infinite;
@@ -173,11 +167,102 @@ html, body {
 
 .clock {
   font-family: 'Outfit', monospace;
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-3xl);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 1px;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Mode Toggle Button ---------- */
+.mode-toggle {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggle-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 64px;
+  height: 32px;
+  background: rgba(0, 200, 83, 0.15);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.mode-toggle:hover .toggle-track {
+  background: rgba(0, 200, 83, 0.25);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.toggle-thumb {
+  position: absolute;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  background: var(--primary);
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 200, 83, 0.4);
+}
+
+.mode-toggle.pharmacy-active .toggle-thumb {
+  transform: translateX(32px);
+  background: var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.mode-toggle.pharmacy-active .toggle-track {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.mode-toggle.pharmacy-active:hover .toggle-track {
+  background: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.toggle-icon-slideshow {
+  margin-left: 1px;
+  color: #fff;
+}
+
+.toggle-icon-pharmacy {
+  margin-left: 6px;
+  color: var(--text-muted);
+  transition: color var(--transition-base);
+}
+
+.mode-toggle.pharmacy-active .toggle-icon-slideshow {
+  color: var(--text-muted);
+}
+
+.mode-toggle.pharmacy-active .toggle-icon-pharmacy {
+  color: #fff;
 }
 
 /* ---------- Mode Containers ---------- */
@@ -245,12 +330,23 @@ html, body {
 
 /* ---------- Animations ---------- */
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeInUp {
@@ -258,6 +354,7 @@ html, body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -265,13 +362,25 @@ html, body {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 /* ============================================
@@ -281,7 +390,7 @@ html, body {
 /* --- Mobil (< 768px) --- */
 @media (max-width: 767px) {
   :root {
-    --topbar-height: 52px;
+    --topbar-height: 64px;
     --fs-xs: 0.65rem;
     --fs-sm: 0.75rem;
     --fs-base: 0.875rem;
@@ -297,18 +406,37 @@ html, body {
   }
 
   .pharmacy-name {
-    font-size: var(--fs-md);
+    font-size: var(--fs-lg);
     letter-spacing: 1px;
-  }
-
-  .pharmacy-logo .logo-icon {
-    width: 28px;
-    height: 28px;
   }
 
   .mode-badge {
     font-size: var(--fs-xs);
     padding: 2px var(--space-sm);
+  }
+
+  .toggle-track {
+    width: 52px;
+    height: 26px;
+  }
+
+  .toggle-thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mode-toggle.pharmacy-active .toggle-thumb {
+    transform: translateX(26px);
+  }
+
+  .toggle-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .toggle-icon svg {
+    width: 11px;
+    height: 11px;
   }
 
   .clock {
@@ -319,21 +447,21 @@ html, body {
 /* --- Tablet (768px – 1024px) --- */
 @media (min-width: 768px) and (max-width: 1024px) {
   :root {
-    --topbar-height: 60px;
+    --topbar-height: 76px;
   }
 }
 
 /* --- Monitör (1024px – 1920px) --- */
 @media (min-width: 1025px) and (max-width: 1920px) {
   :root {
-    --topbar-height: 64px;
+    --topbar-height: 88px;
   }
 }
 
 /* --- TV / Kiosk (> 1920px) --- */
 @media (min-width: 1921px) {
   :root {
-    --topbar-height: 80px;
+    --topbar-height: 104px;
     --fs-xs: 0.875rem;
     --fs-sm: 1rem;
     --fs-base: 1.25rem;
@@ -346,11 +474,6 @@ html, body {
     --space-md: 24px;
     --space-lg: 36px;
     --space-xl: 48px;
-  }
-
-  .pharmacy-logo .logo-icon {
-    width: 48px;
-    height: 48px;
   }
 
   .pharmacy-name {

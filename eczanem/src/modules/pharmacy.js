@@ -5,10 +5,13 @@
 import { CONFIG } from '../config.js';
 import { getLocation, calculateDistance, formatDistance } from './location.js';
 import { fetchPharmacies } from './api.js';
+// pharmacyStore is used via api.js
 
 let map = null;
 let refreshTimer = null;
 let markersLayer = null;
+let tileLayer = null;
+let tileFailed = false;
 
 /**
  * Initialize pharmacy mode
@@ -41,8 +44,8 @@ async function loadPharmacies() {
     const pharmacies = await fetchPharmacies(location.city, location.district);
     console.log(`Got ${pharmacies.length} pharmacies for ${location.district}, ${location.city}`);
 
-    // 3. Fill in missing coordinates
-    const withCoords = ensureCoordinates(pharmacies, location);
+    // 3. Fill in missing coordinates (geocode from address)
+    const withCoords = await ensureCoordinates(pharmacies, location);
 
     // 4. Calculate distances and sort
     const sorted = withCoords.map(p => ({
@@ -52,8 +55,21 @@ async function loadPharmacies() {
 
     // 5. Render
     loading.style.display = 'none';
-    renderMap(location, sorted);
+
+    // If tiles previously failed, go straight to card view
+    if (tileFailed) {
+      renderCardView(sorted, location);
+    } else {
+      hideCardView();
+      renderMap(location, sorted);
+    }
     renderTicker(sorted);
+
+    // Save current pharmacies to localStorage for QR page (nobetci.html)
+    try {
+      localStorage.setItem('currentPharmacies', JSON.stringify(sorted));
+      localStorage.setItem('currentLocation', JSON.stringify(location));
+    } catch { }
   } catch (error) {
     console.error('Load pharmacies error:', error);
     loading.style.display = 'none';
@@ -63,21 +79,130 @@ async function loadPharmacies() {
 
 /**
  * Ensure all pharmacies have coordinates
+ * Uses Nominatim geocoding for missing coords, with localStorage cache
  */
-function ensureCoordinates(pharmacies, center) {
-  return pharmacies.map((p, i) => {
-    if (p.lat && p.lng) return p;
-    // Distribute around center
-    const angle = (2 * Math.PI * i) / pharmacies.length;
-    const r = 0.005 + Math.random() * 0.008;
-    return { ...p, lat: center.lat + r * Math.cos(angle), lng: center.lng + r * Math.sin(angle) };
-  });
+const GEO_CACHE_KEY = 'geocodeCache';
+
+function getGeoCache() {
+  try {
+    return JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || '{}');
+  } catch { return {}; }
+}
+
+function setGeoCache(cache) {
+  try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache)); } catch { }
+}
+
+async function geocodeAddress(name, address, city, district, centerLat, centerLng) {
+  const cache = getGeoCache();
+  const cacheKey = `${name}|${address}`;
+  if (cache[cacheKey]) return cache[cacheKey];
+
+  // Parse address components
+  // e.g. "KAYALIK MAH. SAGLIK CAD. NO:44 /B"
+  const mahMatch = address.match(/(\S+)\s+MAH\.?/i);
+  const mah = mahMatch ? mahMatch[1].trim() : '';
+
+  // Extract street with type (CAD/SOK etc) - full name
+  const cadMatch = address.match(/([\wğüşıöçĞÜŞİÖÇ\s]+?)\s*(CAD|SOK|SOKAK|BULV|BULVAR)\.?/i);
+  const cadName = cadMatch ? `${cadMatch[1].trim()} ${cadMatch[2]}` : '';
+
+  // Extract building number
+  const noMatch = address.match(/NO[:\s]*(\d+)/i);
+  const no = noMatch ? `No ${noMatch[1]}` : '';
+
+  // Viewbox: restrict to ~10km around center (use bounding box)
+  const vbox = centerLat && centerLng
+    ? `&viewbox=${centerLng - 0.1},${centerLat + 0.1},${centerLng + 0.1},${centerLat - 0.1}&bounded=1`
+    : '';
+
+  // Build queries from most specific to least
+  const queries = [];
+  // 1. Street + No + City (most specific)
+  if (cadName && no) {
+    queries.push(`q=${encodeURIComponent(`${cadName} ${no} ${city}`)}`);
+  }
+  // 2. Street + City
+  if (cadName) {
+    queries.push(`q=${encodeURIComponent(`${cadName} ${city}`)}`);
+  }
+  // 3. Mahalle + City  
+  if (mah) {
+    queries.push(`q=${encodeURIComponent(`${mah} Mahallesi ${city}`)}`);
+  }
+
+  for (const params of queries) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=tr&${params}${vbox}`;
+      const res = await fetch(url, {
+        headers: { 'Accept-Language': 'tr' }
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        const result = { lat, lng };
+        cache[cacheKey] = result;
+        setGeoCache(cache);
+        console.log(`Geocoded "${name}" → ${lat.toFixed(6)}, ${lng.toFixed(6)} (query: ${decodeURIComponent(params.substring(2))})`);
+        return result;
+      }
+    } catch {
+      continue;
+    }
+    await new Promise(r => setTimeout(r, 1100));
+  }
+
+  console.warn(`Could not geocode "${name}" (${address})`);
+  return null;
+}
+
+async function ensureCoordinates(pharmacies, center) {
+  const results = [];
+  for (let i = 0; i < pharmacies.length; i++) {
+    const p = pharmacies[i];
+    if (p.lat && p.lng) {
+      results.push(p);
+      continue;
+    }
+
+    // Try geocoding
+    const coords = await geocodeAddress(
+      p.name,
+      p.address || '',
+      center.city || '',
+      center.district || '',
+      center.lat,
+      center.lng
+    );
+
+    if (coords) {
+      results.push({ ...p, lat: coords.lat, lng: coords.lng });
+    } else {
+      // Fallback: place near center with slight offset
+      const angle = (2 * Math.PI * i) / pharmacies.length;
+      const r = 0.003;
+      results.push({
+        ...p,
+        lat: center.lat + r * Math.cos(angle),
+        lng: center.lng + r * Math.sin(angle),
+      });
+    }
+  }
+  return results;
 }
 
 /**
  * Render Leaflet map
  */
+let lastRenderedPharmacies = null;
+let lastRenderedLocation = null;
+
 function renderMap(userLocation, pharmacies) {
+  lastRenderedPharmacies = pharmacies;
+  lastRenderedLocation = userLocation;
+
   // Initialize map
   if (!map) {
     map = L.map('pharmacy-map', {
@@ -85,11 +210,30 @@ function renderMap(userLocation, pharmacies) {
       attributionControl: false,
     });
 
-    // OpenStreetMap tiles
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+    // OpenStreetMap tiles with error detection
+    let tileErrorCount = 0;
+    let tileLoadCount = 0;
+    tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 30,
       attribution: '',
     }).addTo(map);
+
+    // Detect tile load failures → switch to card view
+    tileLayer.on('tileerror', () => {
+      tileErrorCount++;
+      // If 4+ tiles fail and none loaded, assume offline
+      if (tileErrorCount >= 4 && tileLoadCount === 0) {
+        console.warn('Tile loading failed, switching to card view');
+        tileFailed = true;
+        renderCardView(
+          lastRenderedPharmacies || pharmacies,
+          lastRenderedLocation || userLocation
+        );
+      }
+    });
+    tileLayer.on('tileload', () => {
+      tileLoadCount++;
+    });
   }
 
   // Clear markers
@@ -158,7 +302,7 @@ function renderMap(userLocation, pharmacies) {
 
   // Fit map
   if (pharmacies.length > 0) {
-    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
   } else {
     map.setView([userLocation.lat, userLocation.lng], 13);
   }
@@ -168,7 +312,7 @@ function renderMap(userLocation, pharmacies) {
   const refreshMap = () => {
     map.invalidateSize();
     if (pharmacies.length > 0) {
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
     }
   };
   setTimeout(refreshMap, 100);
@@ -191,11 +335,15 @@ function renderTicker(pharmacies) {
   // Build items (duplicate for seamless loop)
   const items = pharmacies.map(p => {
     const dist = formatDistance(p.distance);
+    const shortAddr = p.address && p.address.length > 60
+      ? p.address.substring(0, 57) + '...'
+      : (p.address || '');
     return `
       <div class="ticker-item">
         <div class="ticker-cross">+</div>
         <div class="ticker-info">
           <span class="ticker-name">${escapeHtml(p.name)}</span>
+          ${shortAddr ? `<span class="ticker-address">${escapeHtml(shortAddr)}</span>` : ''}
           <span class="ticker-meta">
             <span class="ticker-distance">${dist}</span>
             <span class="ticker-phone">${escapeHtml(p.phone)}</span>
@@ -209,8 +357,11 @@ function renderTicker(pharmacies) {
   track.innerHTML = items + items;
 
   // Adjust animation speed based on number of items
-  const duration = Math.max(15, pharmacies.length * 6);
+  const duration = Math.max(15, pharmacies.length * 8);
   track.style.animationDuration = `${duration}s`;
+
+  // Generate QR code linking to nobetci.html
+  generateTickerQR();
 }
 
 function showError(message) {
@@ -218,6 +369,22 @@ function showError(message) {
   const errorMsg = document.getElementById('error-message');
   errorMsg.textContent = message;
   errorEl.style.display = 'flex';
+}
+
+/**
+ * Generate QR code pointing to nobetci.html
+ */
+let qrGenerated = false;
+function generateTickerQR() {
+  if (qrGenerated) return;
+  const container = document.getElementById('ticker-qr-code');
+  if (!container) return;
+
+  const targetUrl = `${window.location.origin}/nobetci.html`;
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=${encodeURIComponent(targetUrl)}&bgcolor=0a0e17&color=e2e8f0&format=svg`;
+
+  container.innerHTML = `<img src="${qrApiUrl}" alt="QR" width="90" height="90" style="border-radius:6px;display:block;" />`;
+  qrGenerated = true;
 }
 
 function startRefreshTimer() {
@@ -236,10 +403,78 @@ function escapeHtml(str) {
 }
 
 /**
+ * Render card view (for offline mode without coordinates)
+ */
+function renderCardView(pharmacies, location) {
+  // Hide map, show card container
+  const mapEl = document.getElementById('pharmacy-map');
+  mapEl.style.display = 'none';
+
+  let cardContainer = document.getElementById('pharmacy-cards');
+  if (!cardContainer) {
+    cardContainer = document.createElement('div');
+    cardContainer.id = 'pharmacy-cards';
+    cardContainer.className = 'pharmacy-cards';
+    mapEl.parentElement.insertBefore(cardContainer, mapEl);
+  }
+  cardContainer.style.display = 'flex';
+
+  if (pharmacies.length === 0) {
+    cardContainer.innerHTML = `
+      <div class="pharmacy-card-empty">
+        <p>Bugün için nöbetçi eczane bulunamadı</p>
+      </div>`;
+    return;
+  }
+
+  const locText = location.district && location.city
+    ? `${location.district}, ${location.city}`
+    : '';
+
+  cardContainer.innerHTML = `
+    ${locText ? `<div class="cards-location-badge">📍 ${escapeHtml(locText)}</div>` : ''}
+    <div class="cards-title">Bugün Nöbetçi Eczane${pharmacies.length > 1 ? 'ler' : ''}</div>
+    <div class="cards-grid">
+      ${pharmacies.map(p => `
+        <div class="pharmacy-card">
+          <div class="card-icon">
+            <svg viewBox="0 0 40 40">
+              <rect x="12" y="17" width="16" height="6" rx="1" fill="currentColor"/>
+              <rect x="17" y="12" width="6" height="16" rx="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="card-name">${escapeHtml(p.name)}</div>
+            <div class="card-address">${escapeHtml(p.address)}</div>
+            ${p.phone ? `<div class="card-phone">${escapeHtml(p.phone)}</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/**
+ * Hide card view (when switching back to map mode)
+ */
+function hideCardView() {
+  const cardContainer = document.getElementById('pharmacy-cards');
+  if (cardContainer) cardContainer.style.display = 'none';
+  const mapEl = document.getElementById('pharmacy-map');
+  mapEl.style.display = '';
+}
+
+/**
  * Cleanup
  */
 export function destroyPharmacy() {
   stopRefreshTimer();
   if (map) { map.remove(); map = null; }
   markersLayer = null;
+  tileLayer = null;
+  tileFailed = false;
+  lastRenderedPharmacies = null;
+  lastRenderedLocation = null;
+  qrGenerated = false;
+  hideCardView();
 }

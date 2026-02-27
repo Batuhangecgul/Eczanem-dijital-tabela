@@ -9,6 +9,7 @@ import { initAdmin } from './modules/admin.js';
 
 let currentMode = null;
 let modeCheckInterval = null;
+let manualOverride = false;
 
 /**
  * Application bootstrap
@@ -21,12 +22,16 @@ function init() {
     // Init admin panel (settings button)
     initAdmin();
 
+    // Init mode toggle button
+    initModeToggle();
+
     // Determine initial mode and activate
     const mode = getCurrentMode();
     activateMode(mode);
 
-    // Check mode periodically
+    // Check mode periodically (only when not manually overridden)
     modeCheckInterval = setInterval(() => {
+        if (manualOverride) return;
         const newMode = getCurrentMode();
         if (newMode !== currentMode) {
             switchMode(newMode);
@@ -61,18 +66,25 @@ function activateMode(mode) {
     const modeText = modeBadge.querySelector('.mode-text');
 
     if (mode === 'slideshow') {
+        document.body.classList.add('slideshow-mode');
+        document.body.classList.remove('pharmacy-mode');
         slideshowContainer.classList.add('active');
         pharmacyContainer.classList.remove('active');
         modeBadge.classList.remove('pharmacy-mode');
         modeText.textContent = 'Vitrin Modu';
         initSlideshow();
     } else {
+        document.body.classList.add('pharmacy-mode');
+        document.body.classList.remove('slideshow-mode');
         pharmacyContainer.classList.add('active');
         slideshowContainer.classList.remove('active');
         modeBadge.classList.add('pharmacy-mode');
         modeText.textContent = 'Nöbetçi Eczane';
         initPharmacy();
     }
+
+    // Update toggle button state
+    updateToggleState();
 }
 
 /**
@@ -106,6 +118,37 @@ function switchMode(newMode) {
             overlay.classList.remove('active');
         }, 300);
     }, 500);
+}
+
+/**
+ * Initialize mode toggle button
+ */
+function initModeToggle() {
+    const toggleBtn = document.getElementById('mode-toggle');
+    if (!toggleBtn) return;
+
+    // Set initial toggle state
+    updateToggleState();
+
+    toggleBtn.addEventListener('click', () => {
+        manualOverride = true;
+        const newMode = currentMode === 'slideshow' ? 'pharmacy' : 'slideshow';
+        switchMode(newMode);
+    });
+}
+
+/**
+ * Update toggle button visual state
+ */
+function updateToggleState() {
+    const toggleBtn = document.getElementById('mode-toggle');
+    if (!toggleBtn) return;
+
+    if (currentMode === 'pharmacy') {
+        toggleBtn.classList.add('pharmacy-active');
+    } else {
+        toggleBtn.classList.remove('pharmacy-active');
+    }
 }
 
 /**

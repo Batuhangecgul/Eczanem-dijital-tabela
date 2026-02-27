@@ -3,12 +3,24 @@
  * Handles geolocation and reverse geocoding
  */
 import { CONFIG } from '../config.js';
+import { getOfflineLocation } from './pharmacyStore.js';
 
 /**
  * Get device location using Geolocation API
- * Falls back to static config if unavailable
+ * Falls back to offline data, then static config
  */
 export async function getLocation() {
+    // Check offline location first
+    const offlineLocation = getOfflineLocation();
+    if (offlineLocation && (offlineLocation.city || offlineLocation.district)) {
+        return {
+            lat: offlineLocation.lat || 0,
+            lng: offlineLocation.lng || 0,
+            city: offlineLocation.city || '',
+            district: offlineLocation.district || '',
+        };
+    }
+
     // Use static location if configured
     if (CONFIG.STATIC_LOCATION.enabled) {
         return {

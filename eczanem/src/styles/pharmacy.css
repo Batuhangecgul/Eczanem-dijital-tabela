@@ -246,7 +246,7 @@
 
 /* ---------- Bottom Ticker Bar ---------- */
 .pharmacy-ticker {
-    height: 80px;
+    height: 140px;
     background: linear-gradient(180deg, rgba(10, 14, 23, 0.95) 0%, rgba(15, 20, 35, 1) 100%);
     border-top: 1px solid rgba(0, 200, 83, 0.15);
     display: flex;
@@ -261,21 +261,21 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    min-width: 80px;
+    gap: 4px;
+    min-width: 100px;
     height: 100%;
-    padding: 0 12px;
+    padding: 0 16px;
     background: linear-gradient(135deg, #00c853 0%, #009624 100%);
     color: #fff;
     font-family: 'Outfit', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .ticker-label-icon {
-    font-size: 22px;
+    font-size: 28px;
 }
 
 .ticker-track-wrapper {
@@ -310,45 +310,54 @@
 .ticker-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 0 30px;
+    gap: 16px;
+    padding: 0 36px;
     height: 100%;
     white-space: nowrap;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .ticker-item .ticker-cross {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     background: rgba(0, 200, 83, 0.1);
     border: 2px solid rgba(0, 200, 83, 0.3);
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #4ade80;
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: bold;
     flex-shrink: 0;
 }
 
 .ticker-item .ticker-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .ticker-item .ticker-name {
     font-family: 'Outfit', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: #e2e8f0;
+}
+
+.ticker-item .ticker-address {
+    font-size: 13px;
+    color: #94a3b8;
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ticker-item .ticker-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 12px;
+    gap: 10px;
+    font-size: 13px;
     color: #64748b;
 }
 
@@ -359,6 +368,35 @@
 
 .ticker-item .ticker-phone {
     color: #94a3b8;
+}
+
+/* ---------- QR Code Area ---------- */
+.ticker-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 130px;
+    height: 100%;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+.ticker-qr canvas,
+.ticker-qr img {
+    border-radius: 6px;
+}
+
+.ticker-qr-label {
+    font-size: 10px;
+    color: #64748b;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
 
 /* ---------- Loading / Error ---------- */
@@ -432,7 +470,7 @@
 
 @media (max-width: 767px) {
     .pharmacy-ticker {
-        height: 60px;
+        height: 90px;
     }
 
     .ticker-label {
@@ -441,7 +479,7 @@
     }
 
     .ticker-label-icon {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .ticker-item {
@@ -450,13 +488,27 @@
     }
 
     .ticker-item .ticker-name {
-        font-size: 13px;
+        font-size: 14px;
+    }
+
+    .ticker-item .ticker-address {
+        font-size: 11px;
+        max-width: 200px;
     }
 
     .ticker-item .ticker-cross {
-        width: 26px;
-        height: 26px;
-        font-size: 14px;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .ticker-qr {
+        min-width: 90px;
+        padding: 6px 8px;
+    }
+
+    .ticker-qr-label {
+        font-size: 8px;
     }
 
     .map-location-badge {
@@ -475,36 +527,50 @@
 
 @media (min-width: 1921px) {
     .pharmacy-ticker {
-        height: 100px;
+        height: 170px;
     }
 
     .ticker-label {
-        min-width: 120px;
-        font-size: 16px;
+        min-width: 140px;
+        font-size: 18px;
     }
 
     .ticker-label-icon {
-        font-size: 30px;
+        font-size: 36px;
     }
 
     .ticker-item {
-        padding: 0 40px;
-        gap: 18px;
+        padding: 0 50px;
+        gap: 22px;
     }
 
     .ticker-item .ticker-name {
-        font-size: 20px;
+        font-size: 24px;
+    }
+
+    .ticker-item .ticker-address {
+        font-size: 16px;
+        max-width: 500px;
     }
 
     .ticker-item .ticker-meta {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .ticker-item .ticker-cross {
-        width: 42px;
-        height: 42px;
-        font-size: 24px;
-        border-radius: 12px;
+        width: 54px;
+        height: 54px;
+        font-size: 28px;
+        border-radius: 14px;
+    }
+
+    .ticker-qr {
+        min-width: 170px;
+        padding: 10px 18px;
+    }
+
+    .ticker-qr-label {
+        font-size: 12px;
     }
 
     .map-location-badge {
@@ -530,5 +596,164 @@
         height: 50px !important;
         line-height: 50px !important;
         font-size: 22px !important;
+    }
+}
+
+/* ============================================
+   CARD VIEW (Offline / No Map)
+   ============================================ */
+
+.pharmacy-cards {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    overflow-y: auto;
+    background: radial-gradient(ellipse at center, rgba(0, 200, 83, 0.03) 0%, transparent 70%);
+}
+
+.cards-location-badge {
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.cards-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: var(--fs-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    justify-content: center;
+    max-width: 900px;
+    width: 100%;
+}
+
+.pharmacy-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    min-width: 280px;
+    max-width: 420px;
+    flex: 1 1 320px;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.pharmacy-card:hover {
+    border-color: var(--border-glow);
+    background: var(--bg-card-hover);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: rgba(0, 200, 83, 0.1);
+    color: var(--primary);
+}
+
+.card-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.card-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.card-address {
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.card-phone {
+    font-size: var(--fs-sm);
+    color: var(--primary-light);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.pharmacy-card-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+    padding: var(--space-3xl);
+}
+
+/* Card view responsive */
+@media (max-width: 767px) {
+    .pharmacy-cards {
+        padding: var(--space-md);
+    }
+
+    .cards-title {
+        font-size: var(--fs-xl);
+        margin-bottom: var(--space-md);
+    }
+
+    .cards-grid {
+        gap: var(--space-md);
+    }
+
+    .pharmacy-card {
+        padding: var(--space-md);
+        min-width: unset;
+        flex: 1 1 100%;
+    }
+}
+
+@media (min-width: 1921px) {
+    .cards-title {
+        font-size: var(--fs-3xl);
+    }
+
+    .pharmacy-card {
+        padding: var(--space-xl);
+    }
+
+    .card-name {
+        font-size: var(--fs-xl);
+    }
+
+    .card-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .card-icon svg {
+        width: 36px;
+        height: 36px;
     }
 }
