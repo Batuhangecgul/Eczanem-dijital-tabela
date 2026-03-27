@@ -42,7 +42,19 @@
     }
 }
 
-/* ---------- Navigation Arrows ---------- */
+#slideshow-container {
+    background: var(--snow);
+    color: #000;
+}
+
+#slideshow-container .slideshow-empty h3 {
+    color: var(--navy);
+}
+
+#slideshow-container .slideshow-empty p {
+    color: #64748b;
+}
+
 .slide-nav {
     position: absolute;
     top: 50%;
@@ -52,14 +64,14 @@
     height: 56px;
     border: none;
     border-radius: 50%;
-    background: var(--bg-glass);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    color: var(--text-primary);
+    color: var(--navy);
     cursor: pointer;
     opacity: 0;
     transition: var(--transition-base);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .slide-nav svg {

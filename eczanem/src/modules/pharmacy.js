@@ -62,6 +62,7 @@ async function loadPharmacies() {
     } else {
       hideCardView();
       renderMap(location, sorted);
+      renderOwnPharmacyInfo();
     }
     renderTicker(sorted);
 
@@ -210,12 +211,12 @@ function renderMap(userLocation, pharmacies) {
       attributionControl: false,
     });
 
-    // OpenStreetMap tiles with error detection
+    // Standard OpenStreetMap tiles with error detection
     let tileErrorCount = 0;
     let tileLoadCount = 0;
     tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 30,
-      attribution: '',
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
     // Detect tile load failures → switch to card view
@@ -244,9 +245,9 @@ function renderMap(userLocation, pharmacies) {
   L.marker([userLocation.lat, userLocation.lng], {
     icon: L.divIcon({
       className: 'user-marker-wrapper',
-      html: '<div class="user-marker"></div>',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
+      html: '<div class="user-marker" style="background:#00B4D8; box-shadow: 0 0 12px rgba(0, 180, 216, 0.6);"></div>',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
     }),
   }).addTo(markersLayer);
 
@@ -256,10 +257,24 @@ function renderMap(userLocation, pharmacies) {
   pharmacies.forEach((pharmacy, index) => {
     const icon = L.divIcon({
       className: 'pharmacy-marker-wrapper',
-      html: '<div class="pharmacy-marker"><span class="pharmacy-marker-inner">+</span></div>',
-      iconSize: [40, 40],
-      iconAnchor: [20, 40],
-      popupAnchor: [0, -42],
+      html: `
+        <div class="pharmacy-marker-revised" style="
+          width: 44px; 
+          height: 44px; 
+          background: #D32F2F; 
+          border: 3px solid #FFF; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+          animation: markerDrop 0.4s ease-out;
+        ">
+          <span style="color: #FFF; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 24px;">E</span>
+        </div>`,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22],
+      popupAnchor: [0, -22],
     });
 
     const distText = formatDistance(pharmacy.distance);
@@ -318,6 +333,42 @@ function renderMap(userLocation, pharmacies) {
   setTimeout(refreshMap, 100);
   setTimeout(refreshMap, 500);
   setTimeout(refreshMap, 1000);
+}
+
+/**
+ * Render left side own pharmacy info
+ */
+function renderOwnPharmacyInfo() {
+  const listContainer = document.getElementById('pharmacy-list-container');
+  if (!listContainer) return;
+
+  const name = localStorage.getItem('pharmacyName') || 'Eczanem';
+  const phone = localStorage.getItem('pharmacyPhone') || 'Telefon bilgisi girilmedi';
+  const address = localStorage.getItem('pharmacyAddress') || 'Adres bilgisi girilmedi';
+
+  listContainer.innerHTML = `
+    <div class="own-pharmacy-card">
+      <div class="own-pharmacy-icon">🏥</div>
+      <div class="own-pharmacy-title">Şu An Kapalıyız</div>
+      <div class="own-pharmacy-name">${escapeHtml(name)}</div>
+      <div class="own-pharmacy-detail">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>${escapeHtml(address)}</span>
+      </div>
+      <div class="own-pharmacy-detail">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.78.3 1.54.52 2.29a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.75.22 1.51.4 2.29.52A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span>${escapeHtml(phone)}</span>
+      </div>
+      <div class="own-pharmacy-message">
+        En yakın nöbetçi eczaneleri haritadan veya aşağıdaki listeden görebilirsiniz.
+      </div>
+    </div>
+  `;
 }
 
 /**
@@ -406,16 +457,18 @@ function escapeHtml(str) {
  * Render card view (for offline mode without coordinates)
  */
 function renderCardView(pharmacies, location) {
-  // Hide map, show card container
-  const mapEl = document.getElementById('pharmacy-map');
-  mapEl.style.display = 'none';
+  // Hide split view, show card container
+  const splitView = document.querySelector('.pharmacy-split-view');
+  if (splitView) splitView.style.display = 'none';
 
   let cardContainer = document.getElementById('pharmacy-cards');
   if (!cardContainer) {
     cardContainer = document.createElement('div');
     cardContainer.id = 'pharmacy-cards';
     cardContainer.className = 'pharmacy-cards';
-    mapEl.parentElement.insertBefore(cardContainer, mapEl);
+    if (splitView) {
+      splitView.parentElement.insertBefore(cardContainer, splitView);
+    }
   }
   cardContainer.style.display = 'flex';
 
@@ -460,8 +513,8 @@ function renderCardView(pharmacies, location) {
 function hideCardView() {
   const cardContainer = document.getElementById('pharmacy-cards');
   if (cardContainer) cardContainer.style.display = 'none';
-  const mapEl = document.getElementById('pharmacy-map');
-  mapEl.style.display = '';
+  const splitView = document.querySelector('.pharmacy-split-view');
+  if (splitView) splitView.style.display = 'grid';
 }
 
 /**

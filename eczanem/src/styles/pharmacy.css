@@ -8,11 +8,138 @@
     overflow: hidden;
 }
 
-/* ---------- Map Area ---------- */
-.pharmacy-map {
+/* ---------- Split View Area ---------- */
+.pharmacy-split-view {
     flex: 1;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    padding: 24px;
     min-height: 0;
+    box-sizing: border-box;
+    align-items: start;
+}
+
+.pharmacy-list-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    padding: 24px;
+    background: var(--primary);
+    border-radius: 16px;
+    color: #FFFFFF;
+    box-shadow: var(--shadow-lg);
+}
+
+.pharmacy-list-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.pharmacy-list-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+.pharmacy-list-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.pharmacy-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.pharmacy-map-panel {
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--bg-offwhite);
+    border: 1px solid var(--border);
+    display: flex;
+    position: relative;
+    box-shadow: var(--shadow-md);
+}
+
+.pharmacy-map {
+    width: 100%;
+    height: 100%;
     z-index: 1;
+}
+
+/* Own Pharmacy Card Styles */
+.own-pharmacy-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    text-align: center;
+    height: 100%;
+    justify-content: center;
+}
+
+.own-pharmacy-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.own-pharmacy-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.own-pharmacy-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 32px;
+}
+
+.own-pharmacy-detail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    background: #FFFFFF;
+    padding: 14px 24px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: var(--shadow-sm);
+}
+
+.own-pharmacy-detail svg {
+    width: 20px;
+    height: 20px;
+    color: var(--accent-blue);
+    flex-shrink: 0;
+}
+
+.own-pharmacy-detail span {
+    text-align: left;
+    line-height: 1.4;
+}
+
+.own-pharmacy-message {
+    font-family: 'Poppins', sans-serif;
+    margin-top: 32px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    max-width: 300px;
 }
 
 /* Leaflet theme */
@@ -61,6 +188,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 30px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    pointer-events: none; /* Ignore clicks on map badge */
     animation: fadeInDown 0.5s ease;
 }
 
@@ -101,11 +229,11 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: #00c853;
+    background: var(--primary);
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     border: 3px solid #fff;
-    box-shadow: 0 3px 14px rgba(0, 200, 83, 0.6), 0 0 30px rgba(0, 200, 83, 0.3);
+    box-shadow: 0 3px 14px rgba(227, 24, 55, 0.6), 0 0 30px rgba(227, 24, 55, 0.3);
     animation: markerDrop 0.4s ease-out;
 }
 
@@ -159,17 +287,19 @@
 
 /* ---------- Marker Popup ---------- */
 .leaflet-popup-content-wrapper {
-    background: rgba(15, 20, 35, 0.95) !important;
-    color: #e2e8f0 !important;
+    background: #FFFFFF !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #000000 !important;
     border-radius: 12px !important;
-    border: 1px solid rgba(0, 200, 83, 0.3) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 200, 83, 0.15) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
     padding: 0 !important;
 }
 
 .leaflet-popup-content {
     margin: 0 !important;
-    min-width: 220px;
+    min-width: 240px;
 }
 
 .leaflet-popup-tip {
@@ -194,30 +324,32 @@
 }
 
 .pharmacy-popup .popup-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #4ade80;
-    margin-bottom: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
     padding-right: 20px;
 }
 
 .pharmacy-popup .popup-detail {
     display: flex;
     align-items: flex-start;
-    gap: 6px;
-    font-size: 12px;
-    color: #cbd5e1;
-    margin-bottom: 4px;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 6px;
     line-height: 1.4;
 }
 
 .pharmacy-popup .popup-detail svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
-    margin-top: 1px;
-    color: #64748b;
+    margin-top: 2px;
+    color: var(--primary);
 }
 
 .pharmacy-popup .popup-footer {
@@ -230,13 +362,13 @@
 }
 
 .pharmacy-popup .popup-dist {
-    padding: 2px 10px;
-    background: rgba(0, 200, 83, 0.1);
-    border: 1px solid rgba(0, 200, 83, 0.2);
+    padding: 3px 12px;
+    background: rgba(211, 47, 47, 0.08);
+    border: 1px solid rgba(211, 47, 47, 0.15);
     border-radius: 20px;
     font-size: 11px;
-    font-weight: 600;
-    color: #4ade80;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .pharmacy-popup .popup-district-name {
@@ -247,13 +379,14 @@
 /* ---------- Bottom Ticker Bar ---------- */
 .pharmacy-ticker {
     height: 140px;
-    background: linear-gradient(180deg, rgba(10, 14, 23, 0.95) 0%, rgba(15, 20, 35, 1) 100%);
-    border-top: 1px solid rgba(0, 200, 83, 0.15);
+    background: #9B111E; /* Dark Red for Ticker */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     z-index: 10;
     overflow: hidden;
     flex-shrink: 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .ticker-label {
@@ -262,20 +395,21 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    min-width: 100px;
+    min-width: 120px;
     height: 100%;
     padding: 0 16px;
-    background: linear-gradient(135deg, #00c853 0%, #009624 100%);
+    background: var(--primary);
     color: #fff;
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .ticker-label-icon {
-    font-size: 28px;
+    font-size: 32px;
+    color: var(--accent-blue);
 }
 
 .ticker-track-wrapper {
@@ -339,16 +473,18 @@
 }
 
 .ticker-item .ticker-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: #e2e8f0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
 }
 
 .ticker-item .ticker-address {
-    font-size: 13px;
-    color: #94a3b8;
-    max-width: 350px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 400px;
     overflow: hidden;
     text-overflow: ellipsis;
 }

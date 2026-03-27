@@ -48,10 +48,12 @@ function createAdminPanel() {
 
       <div class="admin-body">
         <div class="admin-section">
-          <h3 class="admin-section-title">🏷️ Eczane Adı</h3>
-          <div class="admin-name-row">
+          <h3 class="admin-section-title">🏪 Eczane Bilgileri</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;">
             <input type="text" id="pharmacy-name-input" class="admin-input" placeholder="Eczane adını yazın..." maxlength="40" />
-            <button class="admin-action-btn primary" id="save-name-btn">Kaydet</button>
+            <input type="text" id="pharmacy-phone-input" class="admin-input" placeholder="Telefon numarasını yazın..." maxlength="20" />
+            <input type="text" id="pharmacy-address-input" class="admin-input" placeholder="Eczane adresini yazın..." maxlength="150" />
+            <button class="admin-action-btn primary" id="save-name-btn" style="margin-top:4px;">Bilgileri Kaydet</button>
           </div>
         </div>
 
@@ -191,18 +193,32 @@ function createAdminPanel() {
         }
     });
 
-    // Pharmacy name input
+    // Pharmacy info inputs
     const nameInput = document.getElementById('pharmacy-name-input');
-    const savedName = localStorage.getItem('pharmacyName') || '';
-    nameInput.value = savedName;
+    const phoneInput = document.getElementById('pharmacy-phone-input');
+    const addressInput = document.getElementById('pharmacy-address-input');
+    
+    nameInput.value = localStorage.getItem('pharmacyName') || '';
+    phoneInput.value = localStorage.getItem('pharmacyPhone') || '';
+    addressInput.value = localStorage.getItem('pharmacyAddress') || '';
 
     document.getElementById('save-name-btn').addEventListener('click', () => {
         const name = nameInput.value.trim();
-        if (name) {
-            localStorage.setItem('pharmacyName', name);
-            applyPharmacyName(name);
-            markDirty();
-        }
+        const phone = phoneInput.value.trim();
+        const address = addressInput.value.trim();
+        
+        if (name) localStorage.setItem('pharmacyName', name);
+        localStorage.setItem('pharmacyPhone', phone);
+        localStorage.setItem('pharmacyAddress', address);
+        
+        applyPharmacyName(name);
+        markDirty();
+        
+        // Show brief visual feedback (could be improved)
+        const btn = document.getElementById('save-name-btn');
+        const origText = btn.innerHTML;
+        btn.innerHTML = '✅ Kaydedildi';
+        setTimeout(() => btn.innerHTML = origText, 2000);
     });
 
     // Offline pharmacy file upload

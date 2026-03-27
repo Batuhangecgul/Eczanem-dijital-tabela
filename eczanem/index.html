@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap"
     rel="stylesheet" />
   <!-- Leaflet.js Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -71,16 +71,26 @@
 
   <!-- Pharmacy Mode (17:00 - 08:00) -->
   <section id="pharmacy-container" class="mode-container">
-    <!-- Map area (top) -->
-    <div id="pharmacy-map" class="pharmacy-map"></div>
+    <!-- Split view for List and Map -->
+    <div class="pharmacy-split-view">
+      <!-- Left Panel: Pharmacy List -->
+      <div class="pharmacy-list-panel">
+        <div id="pharmacy-list-container" class="pharmacy-list-container"></div>
+      </div>
+      
+      <!-- Right Panel: Map area -->
+      <div class="pharmacy-map-panel">
+        <div id="pharmacy-map" class="pharmacy-map"></div>
 
-    <!-- Location badge on map -->
-    <div id="map-location-badge" class="map-location-badge">
-      <svg viewBox="0 0 24 24" class="badge-icon" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-        <circle cx="12" cy="9" r="2.5" />
-      </svg>
-      <span id="location-info">Konum belirleniyor...</span>
+        <!-- Location badge on map -->
+        <div id="map-location-badge" class="map-location-badge">
+          <svg viewBox="0 0 24 24" class="badge-icon" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+            <circle cx="12" cy="9" r="2.5" />
+          </svg>
+          <span id="location-info">Konum belirleniyor...</span>
+        </div>
+      </div>
     </div>
 
     <!-- Scrolling pharmacy ticker (bottom) -->

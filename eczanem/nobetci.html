@@ -70,9 +70,49 @@
 
         /* Content */
         .content {
-            padding: 20px;
-            max-width: 600px;
+            padding: 24px;
+            max-width: 1400px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 24px;
+            height: calc(100vh - 120px);
+            align-items: start;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .left-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .left-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+        .left-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .right-panel {
+            height: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+        }
+
+        .map-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .info-bar {
@@ -84,6 +124,7 @@
             border: 1px solid rgba(0, 200, 83, 0.12);
             border-radius: 12px;
             margin-bottom: 20px;
+            flex-shrink: 0;
         }
 
         .info-bar .count {
@@ -114,10 +155,16 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 14px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .pharmacy-item:active {
             transform: scale(0.98);
+        }
+
+        .pharmacy-item.active {
+            background: rgba(0, 200, 83, 0.08);
+            border-color: rgba(0, 200, 83, 0.3);
         }
 
         .item-icon {
@@ -282,11 +329,16 @@
     </header>
 
     <main class="content">
-        <div id="info-bar" class="info-bar" style="display:none">
-            <span id="pharmacy-count" class="count"></span>
-            <span class="shift-time">Nöbet: 08:30 – 08:30</span>
+        <div class="left-panel">
+            <div id="info-bar" class="info-bar" style="display:none">
+                <span id="pharmacy-count" class="count"></span>
+                <span class="shift-time">Nöbet: 08:30 – 08:30</span>
+            </div>
+            <div id="pharmacy-list" class="pharmacy-list"></div>
         </div>
-        <div id="pharmacy-list" class="pharmacy-list"></div>
+        <div class="right-panel">
+            <iframe id="map-iframe" class="map-iframe" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
     </main>
 
     <footer class="footer">
@@ -385,11 +437,11 @@
             document.getElementById('pharmacy-count').textContent =
                 `${pharmacies.length} Nöbetçi Eczane`;
 
-            listEl.innerHTML = pharmacies.map(p => {
+            listEl.innerHTML = pharmacies.map((p, index) => {
                 const mapsQuery = encodeURIComponent(`${p.name} ${p.address}`);
                 const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
                 return `
-        <div class="pharmacy-item">
+        <div class="pharmacy-item" data-index="${index}">
           <div class="item-icon">+</div>
           <div class="item-content">
             <div class="item-name">${escapeHtml(p.name)}</div>
@@ -413,6 +465,29 @@
           </div>
         </div>`;
             }).join('');
+
+            const iframe = document.getElementById('map-iframe');
+            if (iframe) {
+                const updateMap = (pharmacy) => {
+                    const query = encodeURIComponent(`${pharmacy.name} ${pharmacy.address} ${location?.city || ''}`);
+                    iframe.src = `https://www.google.com/maps?q=${query}&output=embed`;
+                };
+
+                const items = listEl.querySelectorAll('.pharmacy-item');
+                if (items.length > 0) {
+                    updateMap(pharmacies[0]);
+                    items[0].classList.add('active');
+
+                    items.forEach((item) => {
+                        item.addEventListener('click', () => {
+                            items.forEach(el => el.classList.remove('active'));
+                            item.classList.add('active');
+                            const index = item.getAttribute('data-index');
+                            updateMap(pharmacies[index]);
+                        });
+                    });
+                }
+            }
         })();
     </script>
 </body>
