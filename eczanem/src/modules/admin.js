@@ -130,7 +130,8 @@ function createAdminPanel() {
               <input type="number" id="loc-lat" class="admin-input" placeholder="Enlem (lat)" step="any" />
               <input type="number" id="loc-lng" class="admin-input" placeholder="Boylam (lng)" step="any" />
             </div>
-            <button class="admin-action-btn primary" id="save-location-btn">
+                        <div class="location-actions">
+                            <button class="admin-action-btn primary" id="save-location-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                 <polyline points="17 21 17 13 7 13 7 21"/>
@@ -138,6 +139,13 @@ function createAdminPanel() {
               </svg>
               Lokasyonu Kaydet
             </button>
+                            <button class="admin-action-btn danger" id="clear-location-btn" title="Kayıtlı lokasyonu sil">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                Lokasyonu Sil
+                            </button>
+                        </div>
           </div>
           <div id="location-status" class="admin-status"></div>
         </div>
@@ -267,6 +275,25 @@ function createAdminPanel() {
         }, 3000);
     });
 
+    // Clear saved location
+    const clearLocBtn = document.getElementById('clear-location-btn');
+    if (clearLocBtn) {
+        clearLocBtn.addEventListener('click', () => {
+            if (!confirm('Kayıtlı lokasyon silinecek. Emin misiniz?')) return;
+            clearOfflineLocation();
+            // Clear inputs
+            document.getElementById('loc-city').value = '';
+            document.getElementById('loc-district').value = '';
+            document.getElementById('loc-lat').value = '';
+            document.getElementById('loc-lng').value = '';
+            // Update status
+            const locStatus = document.getElementById('location-status');
+            if (locStatus) locStatus.innerHTML = `<div class="status-info" style="color:#94a3b8">Lokasyon kaldırıldı</div>`;
+            updateLocationStatus();
+            markDirty();
+        });
+    }
+
     // Show saved location status
     updateLocationStatus();
 
@@ -387,6 +414,8 @@ function updateLocationStatus() {
     const loc = getOfflineLocation();
     if (loc && loc.city) {
         locStatus.innerHTML = `<div class="status-info">📍 ${loc.district || ''}, ${loc.city}${loc.lat ? ` (${loc.lat}, ${loc.lng})` : ''}</div>`;
+    } else {
+        locStatus.innerHTML = `<div class="status-info" style="color:#94a3b8">Henüz lokasyon ayarlı değil</div>`;
     }
 }
 
