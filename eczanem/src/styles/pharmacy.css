@@ -12,13 +12,14 @@
 .pharmacy-split-view {
     flex: 1;
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: minmax(300px, 30%) 1fr;
     gap: 24px;
     padding: 24px;
     min-height: 0;
     box-sizing: border-box;
     align-items: start;
 }
+
 
 .pharmacy-list-panel {
     display: flex;
@@ -35,10 +36,12 @@
 .pharmacy-list-panel::-webkit-scrollbar {
     width: 6px;
 }
+
 .pharmacy-list-panel::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.02);
     border-radius: 4px;
 }
+
 .pharmacy-list-panel::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
@@ -91,7 +94,7 @@
     margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .own-pharmacy-name {
@@ -188,7 +191,8 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 30px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    pointer-events: none; /* Ignore clicks on map badge */
+    pointer-events: none;
+    /* Ignore clicks on map badge */
     animation: fadeInDown 0.5s ease;
 }
 
@@ -379,7 +383,8 @@
 /* ---------- Bottom Ticker Bar ---------- */
 .pharmacy-ticker {
     height: 140px;
-    background: #9B111E; /* Dark Red for Ticker */
+    background: #9B111E;
+    /* Dark Red for Ticker */
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
@@ -387,6 +392,9 @@
     overflow: hidden;
     flex-shrink: 0;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .ticker-label {
@@ -603,6 +611,7 @@
 /* ============================================
    ADAPTIVE BREAKPOINTS
    ============================================ */
+
 
 @media (max-width: 767px) {
     .pharmacy-ticker {
@@ -891,5 +900,59 @@
     .card-icon svg {
         width: 36px;
         height: 36px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE OVERRIDES (Signage & Portrait)
+   ============================================ */
+
+/* Orientation handling for vertical signage */
+@media (orientation: portrait) {
+    .pharmacy-split-view {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto 1fr !important;
+        height: 100% !important;
+        overflow-y: auto !important;
+    }
+
+    .pharmacy-list-panel {
+        height: auto !important;
+        max-height: 40vh !important;
+    }
+
+    .pharmacy-map-panel {
+        height: 50vh !important;
+    }
+}
+
+/* Tablet & Smaller Layouts */
+@media (max-width: 1024px) {
+    .pharmacy-split-view {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto 1fr !important;
+        padding: 16px !important;
+        gap: 16px !important;
+    }
+
+    .pharmacy-list-panel {
+        height: auto !important;
+        max-height: 50vh !important;
+    }
+
+    .pharmacy-map-panel {
+        height: 400px !important;
+    }
+}
+/* Extra Phone Safeguards */
+@media (max-width: 480px) {
+    .ticker-qr {
+        display: none !important;
+    }
+    .pharmacy-map-panel {
+        height: 35vh !important;
+    }
+    .pharmacy-list-panel {
+        max-height: 45vh !important;
     }
 }

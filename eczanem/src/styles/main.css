@@ -102,6 +102,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-lg);
+  padding-left: calc(var(--space-lg) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-lg) + env(safe-area-inset-right));
   background: transparent;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
