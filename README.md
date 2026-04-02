@@ -19,11 +19,6 @@ Bu proje, eczaneler için özel olarak tasarlanmış bir vitrin (slideshow) ve n
 
 `src/config.js` dosyası üzerinden sistemin çalışma saatlerini ve diğer ayarlarını değiştirebilirsiniz.
 
-### Vitrin Modu Saatleri
-Şu anki yapılandırmaya göre vitrin modu:
-- **Başlangıç:** 08:00
-- **Bitiş:** 17:00
-
 Bu saatler dışında sistem otomatik olarak nöbetçi eczane moduna geçebilir (PHARMACY_START/END ile yapılandırılmışsa).
 
 ## Geliştirme
