@@ -14,8 +14,8 @@
   <!-- Leaflet.js Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script type="module" crossorigin src="/assets/main-DfX10F_T.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-D79MEsgM.css">
+  <script type="module" crossorigin src="/assets/main-BcWjjzoH.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-C_Jtk34z.css">
 </head>
 
 <body>
@@ -25,7 +25,7 @@
       <h1 id="pharmacy-name" class="pharmacy-name">ECZANEM</h1>
     </div>
     <div class="top-bar-right">
-      <div id="mode-badge" class="mode-badge">
+      <div id="mode-badge" class="mode-badge" aria-live="polite">
         <span class="mode-icon"></span>
         <span class="mode-text"></span>
       </div>
@@ -75,7 +75,7 @@
       <div class="pharmacy-list-panel">
         <div id="pharmacy-list-container" class="pharmacy-list-container"></div>
       </div>
-      
+
       <!-- Right Panel: Map area -->
       <div class="pharmacy-map-panel">
         <div id="pharmacy-map" class="pharmacy-map"></div>
@@ -94,7 +94,7 @@
     <!-- Scrolling pharmacy ticker (bottom) -->
     <div id="pharmacy-ticker" class="pharmacy-ticker">
       <div class="ticker-label">
-        <span class="ticker-label-icon">🏥</span>
+        <span class="ticker-label-icon" aria-hidden="true">+</span>
         <span>Nöbetçi</span>
       </div>
       <div class="ticker-track-wrapper">

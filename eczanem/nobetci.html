@@ -88,13 +88,16 @@
                 height: auto;
                 overflow-y: visible;
             }
+
             .left-panel {
                 height: auto !important;
                 overflow-y: visible !important;
             }
+
             .right-panel {
                 height: 500px !important;
-                order: -1; /* Map on top for mobile */
+                order: -1;
+                /* Map on top for mobile */
             }
         }
 
@@ -109,10 +112,12 @@
         .left-panel::-webkit-scrollbar {
             width: 6px;
         }
+
         .left-panel::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 4px;
         }
+
         .left-panel::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
@@ -337,31 +342,74 @@
 
         /* Responsive adjustments for Typography */
         @media (max-width: 640px) {
-            .header-title { font-size: 18px; }
-            .item-name { font-size: 15px; }
-            .item-address { font-size: 12px; }
-            .content { padding: 16px; gap: 16px; }
+            .header-title {
+                font-size: 18px;
+            }
+
+            .item-name {
+                font-size: 15px;
+            }
+
+            .item-address {
+                font-size: 12px;
+            }
+
+            .content {
+                padding: 16px;
+                gap: 16px;
+            }
         }
 
         /* Large Signage scaling */
         @media (min-width: 1921px) {
-            .header { padding: 32px 40px; }
-            .header-title { font-size: 32px; }
-            .header-date, .header-location { font-size: 20px; }
-            .content { max-width: 2200px; grid-template-columns: 600px 1fr; gap: 40px; }
-            .item-name { font-size: 24px; }
-            .item-address { font-size: 18px; }
-            .item-icon { width: 60px; height: 60px; font-size: 28px; }
-            .btn-directions, .btn-call { padding: 12px 20px; font-size: 16px; }
+            .header {
+                padding: 32px 40px;
+            }
+
+            .header-title {
+                font-size: 32px;
+            }
+
+            .header-date,
+            .header-location {
+                font-size: 20px;
+            }
+
+            .content {
+                max-width: 2200px;
+                grid-template-columns: 600px 1fr;
+                gap: 40px;
+            }
+
+            .item-name {
+                font-size: 24px;
+            }
+
+            .item-address {
+                font-size: 18px;
+            }
+
+            .item-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .btn-directions,
+            .btn-call {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
         }
     </style>
+    <link rel="stylesheet" href="/src/styles/nobetci-redesign.css" />
 </head>
 
 <body>
     <header class="header">
         <div>
             <div class="header-title">
-                <span class="header-icon">🏥</span>
+                <span class="header-icon" aria-hidden="true"></span>
                 <span>Nöbetçi Eczaneler</span>
             </div>
             <div id="header-location" class="header-location"></div>
@@ -378,7 +426,8 @@
             <div id="pharmacy-list" class="pharmacy-list"></div>
         </div>
         <div class="right-panel">
-            <iframe id="map-iframe" class="map-iframe" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe id="map-iframe" class="map-iframe" allowfullscreen loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </main>
 
@@ -456,7 +505,7 @@
                 if (location.district) parts.push(location.district);
                 if (location.city) parts.push(location.city);
                 if (parts.length) {
-                    document.getElementById('header-location').textContent = '📍 ' + parts.join(', ');
+                    document.getElementById('header-location').textContent = parts.join(', ');
                 }
             }
 
@@ -467,7 +516,7 @@
             if (pharmacies.length === 0) {
                 listEl.innerHTML = `
           <div class="empty-state">
-            <div class="empty-icon">💊</div>
+            <div class="empty-icon" aria-hidden="true"></div>
             <h2>Nöbetçi Eczane Bulunamadı</h2>
             <p>${formatDateTR(todayKey)} tarihi için kayıtlı nöbetçi eczane bulunmuyor.</p>
           </div>`;

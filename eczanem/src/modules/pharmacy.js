@@ -38,7 +38,7 @@ async function loadPharmacies() {
     // 1. Get location
     locationInfo.textContent = 'Konum belirleniyor...';
     const location = await getLocation();
-    locationInfo.textContent = `📍 ${location.district}, ${location.city}`;
+    locationInfo.textContent = `${location.district}, ${location.city}`;
 
     // 2. Fetch pharmacies from scraper
     const pharmacies = await fetchPharmacies(location.city, location.district);
@@ -348,7 +348,7 @@ function renderOwnPharmacyInfo() {
 
   listContainer.innerHTML = `
     <div class="own-pharmacy-card">
-      <div class="own-pharmacy-icon">🏥</div>
+      <div class="own-pharmacy-icon" aria-hidden="true"></div>
       <div class="own-pharmacy-title">Şu An Kapalıyız</div>
       <div class="own-pharmacy-name">${escapeHtml(name)}</div>
       <div class="own-pharmacy-detail">
@@ -485,7 +485,7 @@ function renderCardView(pharmacies, location) {
     : '';
 
   cardContainer.innerHTML = `
-    ${locText ? `<div class="cards-location-badge">📍 ${escapeHtml(locText)}</div>` : ''}
+    ${locText ? `<div class="cards-location-badge">${escapeHtml(locText)}</div>` : ''}
     <div class="cards-title">Bugün Nöbetçi Eczane${pharmacies.length > 1 ? 'ler' : ''}</div>
     <div class="cards-grid">
       ${pharmacies.map(p => `
