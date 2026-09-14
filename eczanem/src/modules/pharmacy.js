@@ -431,7 +431,12 @@ function generateTickerQR() {
   const container = document.getElementById('ticker-qr-code');
   if (!container) return;
 
-  const targetUrl = `${window.location.origin}/nobetci.html`;
+  const sharedLocation = lastRenderedLocation || {};
+  const targetParams = new URLSearchParams({
+    city: sharedLocation.city || '',
+    district: sharedLocation.district || '',
+  });
+  const targetUrl = `${window.location.origin}/nobetci.html?${targetParams}`;
   const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=${encodeURIComponent(targetUrl)}&bgcolor=0a0e17&color=e2e8f0&format=svg`;
 
   container.innerHTML = `<img src="${qrApiUrl}" alt="QR" width="90" height="90" style="border-radius:6px;display:block;" />`;

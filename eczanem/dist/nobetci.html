@@ -436,7 +436,7 @@
     </footer>
 
     <script>
-        (function () {
+        (async function () {
             // ─── Helpers ───
             function getTodayKey() {
                 const now = new Date();
@@ -469,6 +469,7 @@
 
             // ─── Data ───
             const todayKey = getTodayKey();
+            const sharedParams = new URLSearchParams(window.location.search);
             let pharmacies = [];
 
             // Try online data first (saved by main app)
@@ -494,7 +495,69 @@
                 location = raw ? JSON.parse(raw) : null;
             } catch { }
 
+            if (!location && sharedParams.get('city')) {
+                location = {
+                    city: sharedParams.get('city'),
+                    district: sharedParams.get('district') || '',
+                };
+            }
+
+            if (pharmacies.length === 0) {
+                try {
+                    location = location || await getDeviceLocation();
+                    if (location?.city) {
+                        const params = new URLSearchParams({
+                            city: location.city,
+                            district: location.district || '',
+                        });
+                        const response = await fetch(`/api/pharmacies?${params}`);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const result = await response.json();
+                        if (result.status !== 'success' || !Array.isArray(result.pharmacies)) {
+                            throw new Error('Gerçek nöbetçi eczane verisi alınamadı');
+                        }
+                        pharmacies = result.pharmacies;
+                        localStorage.setItem('currentPharmacies', JSON.stringify(pharmacies));
+                        localStorage.setItem('currentLocation', JSON.stringify(location));
+                    }
+                } catch (error) {
+                    console.warn('QR pharmacy load failed:', error.message);
+                }
+            }
+
             const pharmacyName = localStorage.getItem('pharmacyName') || 'Eczanem';
+
+            async function getDeviceLocation() {
+                if (!navigator.geolocation) {
+                    throw new Error('Bu cihaz konum bilgisini desteklemiyor');
+                }
+
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000,
+                    });
+                });
+
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=tr&zoom=10`,
+                    { headers: { 'User-Agent': 'EczanemApp/1.0' } },
+                );
+
+                if (!response.ok) throw new Error('Konum bilgisi alınamadı');
+                const data = await response.json();
+                const address = data.address || {};
+
+                return {
+                    lat,
+                    lng,
+                    city: address.province || address.state || address.city || '',
+                    district: address.county || address.town || address.suburb || address.city_district || '',
+                };
+            }
 
             // ─── Render Header ───
             document.getElementById('header-date').textContent = formatDateTR(todayKey);
